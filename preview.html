@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Buzón de Sugerencias Digital · PREPARA 360</title>
+<style>
+:root{--az:#002D62;--az2:#0B4A94;--rj:#CE1126;--bl:#fff;--bg:#F3F5F9;--tx:#1d2433;--bd:#cfd6e2;--mu:#5b6578}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font:16px/1.55 "Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--tx)}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;color:var(--az);line-height:1.2}
+.flag{display:flex;height:8px}.flag i{flex:1;background:var(--az)}.flag i:nth-child(2){background:var(--bl)}.flag i:nth-child(3){background:var(--rj)}
+header{background:var(--az);color:var(--bl);padding:1.6rem 1rem 0;text-align:center}
+header h1{color:var(--bl);font-size:1.7rem}header p{opacity:.85;margin:.3rem 0 1.2rem}
+nav{display:flex;justify-content:center;gap:.25rem;flex-wrap:wrap}
+nav button{background:transparent;color:#cfe0f5;border:0;padding:.7rem 1.2rem;font:600 .95rem inherit;font-family:inherit;cursor:pointer;border-bottom:4px solid transparent}
+nav button[aria-selected=true]{color:var(--bl);border-color:var(--rj);background:rgba(255,255,255,.08)}
+nav button:focus-visible,.btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--rj);outline-offset:2px}
+main{max-width:1000px;margin:1.5rem auto;padding:0 1rem}
+section{display:none;background:var(--bl);border-radius:10px;padding:1.6rem;box-shadow:0 2px 14px rgba(0,30,70,.08);border-top:4px solid var(--az)}
+section.on{display:block}
+section>h2{margin-bottom:.4rem}.lead{color:var(--mu);margin-bottom:1.2rem}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}@media(max-width:640px){.grid{grid-template-columns:1fr}}
+.full{grid-column:1/-1}
+label{display:block;font-weight:600;color:var(--az);margin-bottom:.3rem;font-size:.92rem}
+input,select,textarea{width:100%;padding:.65rem .75rem;border:1.5px solid var(--bd);border-radius:6px;font:inherit;background:var(--bl)}
+textarea{min-height:140px;resize:vertical}
+.bad{border-color:var(--rj)}.err{color:var(--rj);font-size:.82rem;min-height:1.1rem;display:block}
+.btn{background:var(--az);color:var(--bl);border:0;border-radius:6px;padding:.7rem 1.3rem;font:600 .95rem inherit;font-family:inherit;cursor:pointer}
+.btn:hover{background:var(--az2)}.btn.rj{background:var(--rj)}.btn.rj:hover{background:#a50d1d}.btn.ghost{background:var(--bl);color:var(--az);border:1.5px solid var(--az)}
+.row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
+.msg{padding:.9rem 1rem;border-radius:6px;margin-bottom:1rem;display:none;border-left:5px solid}
+.msg.ok{background:#e7f4ea;border-color:#1f7a3a;color:#14532d;display:block}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin:1rem 0 1.5rem}
+.kpi{border:1.5px solid var(--bd);border-left:5px solid var(--az);border-radius:6px;padding:.7rem .9rem}.kpi:nth-child(even){border-left-color:var(--rj)}
+.kpi b{display:block;font:700 1.9rem Georgia,serif;color:var(--az)}.kpi span{color:var(--mu);font-size:.85rem}
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.4rem;margin-bottom:1.5rem}
+.bar{display:grid;grid-template-columns:110px 1fr 28px;gap:.5rem;align-items:center;font-size:.85rem;margin:.35rem 0}
+.bar div{background:#e5eaf3;border-radius:3px;height:14px}.bar div i{display:block;height:100%;background:var(--az);border-radius:3px;min-width:2px}
+.bar:nth-child(even) div i{background:var(--rj)}
+h3{font-size:1.1rem;margin:.2rem 0 .5rem}
+.tw{overflow-x:auto;border:1px solid var(--bd);border-radius:6px;margin-top:.6rem}
+table{width:100%;border-collapse:collapse;font-size:.88rem}th,td{padding:.55rem .7rem;text-align:left;border-bottom:1px solid #e3e8f0;vertical-align:top}
+th{background:var(--az);color:var(--bl);white-space:nowrap}tbody tr:nth-child(even){background:#f7f9fc}
+.tag{display:inline-block;padding:.05rem .5rem;border-radius:99px;background:#e3ebf7;color:var(--az);font-size:.78rem;white-space:nowrap}
+.del{background:none;border:0;color:var(--rj);cursor:pointer;font-weight:700;font-size:.85rem}
+.empty{color:var(--mu);text-align:center;padding:1.2rem}
+.filters{display:grid;grid-template-columns:2fr 1fr 1fr;gap:.6rem;margin:.6rem 0}@media(max-width:640px){.filters{grid-template-columns:1fr}}
+#qrBox{margin-top:1rem}
+.hint{font-size:.85rem;color:var(--mu);margin-top:.5rem}
+footer{text-align:center;color:var(--mu);font-size:.82rem;padding:1.5rem 1rem}
+@media print{
+  @page{size:A4;margin:16mm 14mm 18mm}
+  body{background:#fff!important;color:#111;font-size:11pt}
+  header,nav,#enviar,#qr,.filters,#dash>.row,#bClear,#bOut,button{display:none!important}
+  main{max-width:none;margin:0;padding:0}
+  #panel{display:block!important;box-shadow:none;border:0;border-top:0;padding:0;margin:0}
+  #panel>h2,#panel>.lead{display:none!important}
+  #dash{display:block!important}
+  .print-head{display:block!important;text-align:center;border-bottom:3px solid #002D62;padding-bottom:10px;margin-bottom:14px}
+  .print-head h1{font-family:Georgia,"Times New Roman",serif;color:#002D62;font-size:19pt;margin:0 0 4px}
+  .print-head p{margin:2px 0;color:#4d596b;font-size:10pt}
+  .print-head .seal{display:inline-block;margin-top:7px;padding:4px 12px;border:1px solid #002D62;border-radius:99px;color:#002D62;font-weight:700;font-size:8.5pt;letter-spacing:.4px}
+  .kpis{margin:8px 0 14px;grid-template-columns:repeat(4,1fr);gap:7px}
+  .kpi{padding:7px;border:1px solid #cfd6e2;border-left:4px solid #002D62;break-inside:avoid}
+  .kpi b{font-size:17pt}
+  .charts{grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+  .charts>div{break-inside:avoid}
+  .bar{font-size:8pt;grid-template-columns:75px 1fr 20px;gap:4px}
+  .bar div{height:9px}
+  h3{font-size:10.5pt;margin:8px 0 4px}
+  .tw{overflow:visible;border:1px solid #cfd6e2;border-radius:3px}
+  table{font-size:8.5pt;page-break-inside:auto}
+  tr{page-break-inside:avoid;page-break-after:auto}
+  th{background:#002D62!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  th,td{padding:5px 6px}
+  #tReg td:last-child,#tReg th:last-child{display:none}
+  #tReg td:nth-child(7){max-width:270px;word-break:break-word}
+  .print-foot{display:block!important;margin-top:18px;padding-top:8px;border-top:1px solid #cfd6e2;text-align:center;color:#5b6578;font-size:8.5pt}
+  footer{display:none!important}
+}
+</style>
+</head>
+<body>
+<div class="flag"><i></i><i></i><i></i></div>
+<header>
+  <h1>Buzón de Sugerencias Digital</h1>
+  <p>PREPARA 360 · Regional 15 · Ministerio de Educación (MINERD)</p>
+  <nav role="tablist">
+    <button role="tab" data-t="enviar" aria-selected="true">Enviar sugerencia</button>
+    <button role="tab" data-t="panel" aria-selected="false">Panel de métricas</button>
+    <button role="tab" data-t="qr" aria-selected="false">Código QR</button>
+  </nav>
+</header>
+
+<main>
+<section id="enviar" class="on">
+  <h2>Su opinión mejora nuestros centros</h2>
+  <p class="lead">Complete los campos y seleccione el botón correspondiente para enviar la sugerencia directamente a su correo.</p>
+  <div id="aviso" class="msg" role="status"></div>
+  <form id="frm" novalidate>
+    <div class="grid">
+      <div class="full"><label for="centro">Nombre del centro educativo / código del centro</label>
+        <input id="centro" placeholder="Escriba el nombre o código real del centro educativo" autocomplete="off"><span class="err"></span></div>
+      <div><label for="distrito">Distrito educativo</label>
+        <select id="distrito"><option value="">Seleccione…</option>
+          <option>15-01</option><option>15-02</option><option>15-03</option><option>15-04</option><option>15-05</option><option>15-06</option><option>Otro</option></select><span class="err"></span></div>
+      <div><label for="actor">Tipo de actor</label>
+        <select id="actor"><option value="">Seleccione…</option><option>Docente</option><option>Estudiante</option><option>Directivo</option><option>Familiar</option></select><span class="err"></span></div>
+      <div class="full"><label for="cat">Categoría de la sugerencia</label>
+        <select id="cat"><option value="">Seleccione…</option><option>Pedagógica</option><option>Administrativa</option><option>Infraestructura</option><option>Otra</option></select><span class="err"></span></div>
+      <div class="full"><label for="msg">Mensaje o sugerencia detallada</label>
+        <textarea id="msg" placeholder="Describa su sugerencia con el mayor detalle posible (mínimo 15 caracteres)."></textarea><span class="err"></span></div>
+    </div>
+    <div class="row" style="margin-top:1.2rem">
+      <button class="btn rj" type="button" id="btnGmail">📩 Enviar a Gmail</button>
+      <button class="btn" type="button" id="btnOutlook">📨 Enviar a Outlook</button>
+      <button class="btn ghost" type="reset">Limpiar</button>
+    </div>
+  </form>
+</section>
+
+<section id="panel">
+  <h2>Panel de métricas</h2>
+  <div id="lock">
+    <p class="lead">Acceso solo para la Regional. Ingrese el código de administración (Clave: <strong>ADMIN15</strong>).</p>
+    <div class="row"><input id="pin" type="password" placeholder="Código de acceso" style="max-width:260px" autocomplete="off"><button class="btn" id="btnPin">Entrar</button></div>
+    <span class="err" id="pinErr"></span>
+  </div>
+  <div id="dash" hidden>
+    <div class="print-head" hidden>
+      <h1>Reporte Oficial de Sugerencias y Retroalimentación - PREPARA 360 (Regional 15 de Educación)</h1>
+      <p>Ministerio de Educación de la República Dominicana · MINERD</p>
+      <p>Panel de métricas y registro de sugerencias</p>
+      <span class="seal">PREPARA 360 · REGIONAL 15</span>
+    </div>
+    <p class="lead">Datos guardados en este navegador. Se actualizan al instante.</p>
+    <div class="kpis" id="kpis"></div>
+    <div class="charts">
+      <div><h3>Por categoría</h3><div id="chCat"></div></div>
+      <div><h3>Por distrito</h3><div id="chDis"></div></div>
+      <div><h3>Por tipo de actor</h3><div id="chAct"></div></div>
+    </div>
+    <h3>Envíos por centro educativo</h3>
+    <div class="tw"><table><thead><tr><th>Centro</th><th>Distrito(s)</th><th>Envíos</th></tr></thead><tbody id="tCentros"></tbody></table></div>
+    <h3 style="margin-top:1.5rem">Listado de sugerencias</h3>
+    <div class="filters">
+      <input id="q" type="search" placeholder="Buscar por centro o mensaje…" aria-label="Buscar">
+      <select id="fCat" aria-label="Filtrar por categoría"><option value="">Todas las categorías</option><option>Pedagógica</option><option>Administrativa</option><option>Infraestructura</option><option>Otra</option></select>
+      <select id="fDis" aria-label="Filtrar por distrito"><option value="">Todos los distritos</option><option>15-01</option><option>15-02</option><option>15-03</option><option>15-04</option><option>15-05</option><option>15-06</option><option>Otro</option></select>
+    </div>
+    <div class="tw"><table><thead><tr><th>Fecha</th><th>Centro</th><th>Distrito</th><th>Actor</th><th>Categoría</th><th>Destino</th><th>Mensaje</th><th>Envío</th><th></th></tr></thead><tbody id="tReg"></tbody></table></div>
+    <div class="row" style="margin-top:1rem">
+      <button class="btn" id="bExcel">📊 Descargar Excel (.xls)</button>
+      <button class="btn" id="bWord">📝 Descargar Word (.doc)</button>
+      <button class="btn" id="bPdf">📄 Guardar como PDF / Imprimir</button>
+      <button class="btn ghost" id="bJson">Descargar JSON</button>
+      <button class="btn" id="bCentros">🏫 Descargar centros y distritos</button>
+      <button class="btn rj" id="bClear">🧹 Limpiar / borrar todo</button>
+      <button class="btn ghost" id="bOut">Cerrar panel</button>
+    </div>
+    <p class="hint">Cada navegador guarda sus propios datos.</p>
+    <div class="print-foot" hidden>
+      PREPARA 360 · Regional 15 de Educación · República Dominicana · Reporte generado el <span id="printDate"></span>
+    </div>
+  </div>
+</section>
+
+<section id="qr">
+  <h2>Código QR para los centros</h2>
+  <p class="lead">Genere el QR del enlace público donde esté alojada esta plataforma y compártalo con los directores.</p>
+  <label for="url">Enlace público del buzón</label>
+  <div class="row"><input id="url" type="url" placeholder="https://tu-dominio-o-alojamiento.com/" style="flex:1;min-width:240px"><button class="btn" id="bQr">Generar QR</button></div>
+  <span class="err" id="qrErr"></span>
+  <div id="qrBox" hidden>
+    <div id="qrContainer" style="margin-top:1rem;display:inline-block;padding:10px;background:#fff;border:1px solid #ccc;border-radius:6px;"></div>
+    <div class="row" style="margin-top:.8rem"><button class="btn rj" id="bQrDl">Descargar PNG</button></div>
+  </div>
+</section>
+</main>
+<footer>PREPARA 360 · Regional 15 de Educación · República Dominicana</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+const CFG={
+  EMAILS: {
+    GMAIL: "edwinjoseruizcordero1976@gmail.com",
+    OUTLOOK: "edwinj.@docente.edu.do"
+  },
+  PIN_ADMIN:"ADMIN15",
+  KEY:"prepara360_buzon_v16"
+};
+
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+const load=()=>{
+  try{
+    const d = JSON.parse(localStorage.getItem(CFG.KEY));
+    if(!Array.isArray(d)) {
+      localStorage.setItem(CFG.KEY, JSON.stringify([]));
+      return [];
+    }
+    return d;
+  }catch(e){return []}
+};
+const save=a=>{try{localStorage.setItem(CFG.KEY,JSON.stringify(a))}catch(e){}};
+function cambiarPestana(targetId) {
+  $$("nav button").forEach(b => {
+    b.setAttribute("aria-selected", b.dataset.t === targetId ? "true" : "false");
+  });
+  $$("main section").forEach(s => {
+    if(s.id === targetId) {
+      s.classList.add("on");
+    } else {
+      s.classList.remove("on");
+    }
+  });
+  if(targetId === "panel" && sessionStorage.getItem("p15") === "1") {
+    renderPanel();
+  }
+}
+
+$$("nav button").forEach(btn => {
+  btn.onclick = () => cambiarPestana(btn.dataset.t);
+});
+
+const F = {centro: $("#centro"), distrito: $("#distrito"), actor: $("#actor"), cat: $("#cat"), msg: $("#msg")};
+
+function validarFormulario() {
+  let ok = true;
+  const reglas = {
+    centro: v => v.length >= 3 || "Escriba el nombre o código del centro.",
+    distrito: v => !!v || "Seleccione el distrito.",
+    actor: v => !!v || "Seleccione el tipo de actor.",
+    cat: v => !!v || "Seleccione una categoría.",
+    msg: v => v.length >= 15 || "El mensaje debe tener al menos 15 caracteres."
+  };
+  for(const k in F) {
+    const val = F[k].value.trim();
+    const res = reglas[k](val);
+    const errSpan = F[k].parentNode.querySelector(".err");
+    F[k].classList.toggle("bad", res !== true);
+    if(errSpan) errSpan.textContent = res === true ? "" : res;
+    if(res !== true) ok = false;
+  }
+  return ok;
+}
+
+function mostrarAviso(texto, clase) {
+  const a = $("#aviso");
+  a.className = "msg " + clase;
+  a.innerHTML = texto;
+  a.style.display = "block";
+  a.scrollIntoView({behavior: "smooth", block: "nearest"});
+}
+
+function enviarCorreoDirecto(emailDestino, etiquetaDestino) {
+  if(!validarFormulario()) return;
+  const registro = {
+    id: Date.now().toString(36),
+    fecha: new Date().toLocaleString("es-DO"),
+    centro: F.centro.value.trim(),
+    distrito: F.distrito.value,
+    actor: F.actor.value,
+    categoria: F.cat.value,
+    correoDestino: etiquetaDestino,
+    mensaje: F.msg.value.trim(),
+    envio: "Enviado a " + etiquetaDestino
+  };
+  
+  const datos = load();
+  datos.unshift(registro);
+  save(datos);
+  
+  const asunto = encodeURIComponent(`[Buzón PREPARA 360] ${registro.categoria} - ${registro.centro} (${registro.distrito})`);
+  const cuerpo = encodeURIComponent(`Nueva sugerencia recibida
+
+Fecha: ${registro.fecha}
+Centro: ${registro.centro}
+Distrito: ${registro.distrito}
+Actor: ${registro.actor}
+Categoría: ${registro.categoria}
+
+Mensaje:
+${registro.mensaje}`);
+
+  mostrarAviso(`<strong>¡Registrado con éxito!</strong> Abriendo aplicación de correo para enviar a <strong>${emailDestino}</strong>.`, "ok");
+  setTimeout(() => {
+    location.href = `mailto:${emailDestino}?subject=${asunto}&body=${cuerpo}`;
+  }, 400);
+}
+
+$("#btnGmail").onclick = () => enviarCorreoDirecto(CFG.EMAILS.GMAIL, "Gmail");
+$("#btnOutlook").onclick = () => enviarCorreoDirecto(CFG.EMAILS.OUTLOOK, "Outlook");
+
+Object.values(F).forEach(el => {
+  el.addEventListener("input", () => {
+    el.classList.remove("bad");
+    const err = el.parentNode.querySelector(".err");
+    if(err) err.textContent = "";
+  });
+});
+
+function desbloquearPanel() {
+  const pinInput = $("#pin");
+  const pinErr = $("#pinErr");
+  if(pinInput.value.trim().toUpperCase() === CFG.PIN_ADMIN) {
+    sessionStorage.setItem("p15", "1");
+    pinErr.textContent = "";
+    actualizarVistaPanel();
+  } else {
+    pinErr.textContent = "Código incorrecto.";
+  }
+}
+
+function actualizarVistaPanel() {
+  const autorizado = sessionStorage.getItem("p15") === "1";
+  $("#lock").hidden = autorizado;
+  $("#dash").hidden = !autorizado;
+  if(autorizado) renderPanel();
+}
+
+$("#btnPin").onclick = desbloquearPanel;
+$("#pin").onkeydown = e => { if(e.key === "Enter") desbloquearPanel(); };
+$("#bOut").onclick = () => { sessionStorage.setItem("p15", "0"); $("#pin").value = ""; actualizarVistaPanel(); };
+
+const agrupar = (arr, key) => arr.reduce((o, x) => (o[x[key]] = (o[x[key]] || 0) + 1, o), {});
+
+function renderBarras(elId, obj, orden) {
+  const keys = orden || Object.keys(obj).sort((a,b) => obj[b] - obj[a]);
+  const max = Math.max(1, ...Object.values(obj));
+  $(elId).innerHTML = keys.map(k => `<div class="bar"><span>${esc(k)}</span><div><i style="width:${(obj[k]||0)/max*100}%"></i></div><b>${obj[k]||0}</b></div>`).join("") || '<p class="empty">Sin datos</p>';
+}
+
+function renderPanel() {
+  const datos = load();
+  const centros = {};
+  datos.forEach(x => {
+    const k = x.centro.toLowerCase();
+    (centros[k] = centros[k] || {n: x.centro, d: new Set(), c: 0}).c++;
+    centros[k].d.add(x.distrito);
+  });
+  const distritos = agrupar(datos, "distrito");
+  
+  $("#kpis").innerHTML = [
+    [datos.length, "Sugerencias recibidas"],
+    [Object.keys(centros).length, "Centros participantes"],
+    [Object.keys(distritos).length, "Distritos con envíos"],
+    [datos.length ? datos[0].fecha.split(",")[0] : "—", "Último envío"]
+  ].map(([n, l]) => `<div class="kpi"><b>${esc(n)}</b><span>${l}</span></div>`).join("");
+
+  renderBarras("#chCat", agrupar(datos, "categoria"), ["Pedagógica", "Administrativa", "Infraestructura", "Otra"]);
+  renderBarras("#chDis", distritos);
+  renderBarras("#chAct", agrupar(datos, "actor"), ["Docente", "Estudiante", "Directivo", "Familiar"]);
+
+  const cs = Object.values(centros).sort((x,y) => y.c - x.c);
+  $("#tCentros").innerHTML = cs.map(c => `<tr><td>${esc(c.n)}</td><td>${esc([...c.d].join(", "))}</td><td><b>${c.c}</b></td></tr>`).join("") || '<tr><td colspan="3" class="empty">Aún no hay envíos.</td></tr>';
+
+  const q = $("#q").value.toLowerCase().trim();
+  const fc = $("#fCat").value;
+  const fd = $("#fDis").value;
+  const filtrados = datos.filter(x => (!fc || x.categoria === fc) && (!fd || x.distrito === fd) && (!q || (x.centro + " "+ x.mensaje).toLowerCase().includes(q)));
+
+  $("#tReg").innerHTML = filtrados.map(x => `<tr><td>${esc(x.fecha)}</td><td>${esc(x.centro)}</td><td>${esc(x.distrito)}</td><td>${esc(x.actor)}</td><td><span class="tag">${esc(x.categoria)}</span></td><td>${esc(x.correoDestino||"—")}</td><td>${esc(x.mensaje)}</td><td>${esc(x.envio)}</td><td><button class="del" data-id="${x.id}" title="Eliminar este registro del buzón">Eliminar registro</button></td></tr>`).join("") || '<tr><td colspan="9" class="empty">No hay registros que coincidan.</td></tr>';
+}
+
+["#q", "#fCat", "#fDis"].forEach(s => $(s).addEventListener("input", renderPanel));
+$("#tReg").onclick = e => {
+  const id = e.target.dataset.id;
+  if(id && confirm("¿Eliminar este registro del buzón? Esta acción no elimina el correo de Gmail u Outlook, solo el registro guardado en esta plataforma.")) {
+    save(load().filter(x => x.id !== id));
+    renderPanel();
+  }
+};
+$("#bClear").onclick = () => {
+  if(load().length && confirm("¿Borrar TODOS los registros del buzón? Esta acción eliminará todos los centros, distritos y sugerencias guardados localmente y no puede deshacerse.")) {
+    save([]);
+    renderPanel();
+  }
+};
+
+// MOTOR DE DESCARGA DIRECTA: Blob + Object URL para archivos locales seguros.
+function descargarArchivoDirecto(nombre, contenido, tipoMime){
+  try{
+    const blob = new Blob(["\ufeff", contenido], {type: tipoMime});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = nombre;
+    a.rel = "noopener";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+  }catch(e){
+    console.error("Error al generar la descarga:", e);
+    alert("No fue posible generar el archivo. Revise la consola para más información.");
+  }
+}
+
+function datosFiltrados(){
+  const datos = load();
+  const q = $("#q").value.toLowerCase().trim();
+  const fc = $("#fCat").value;
+  const fd = $("#fDis").value;
+  return datos.filter(x =>
+    (!fc || x.categoria === fc) &&
+    (!fd || x.distrito === fd) &&
+    (!q || (String(x.centro||"") + " " + String(x.mensaje||"")).toLowerCase().includes(q))
+  );
+}
+
+function fechaArchivo(){
+  return new Date().toISOString().slice(0,10);
+}
+
+// Exportación Excel: HTML tabular compatible con Excel y Google Sheets.
+$("#bExcel").onclick = () => {
+  const datos = datosFiltrados();
+  if(!datos.length) return alert("No hay sugerencias que coincidan con los filtros actuales.");
+
+  const filas = datos.map(x => `
+    <tr>
+      <td>${esc(x.id || "")}</td>
+      <td>${esc(x.fecha || "")}</td>
+      <td>${esc(x.centro || "")}</td>
+      <td>${esc(x.distrito || "")}</td>
+      <td>${esc(x.actor || "")}</td>
+      <td>${esc(x.categoria || "")}</td>
+      <td>${esc(x.correoDestino || "—")}</td>
+      <td>${esc(x.mensaje || "")}</td>
+    </tr>`).join("");
+
+  const tabla = `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<style>
+  body{font-family:Calibri,Arial,sans-serif;color:#1d2433}
+  h1{font-size:18pt;color:#002D62;text-align:center;margin:0 0 4px}
+  p{font-size:10pt;text-align:center;color:#5b6578;margin:2px 0 12px}
+  table{border-collapse:collapse;width:100%;table-layout:fixed}
+  th{background:#002D62;color:#fff;font-weight:700;text-align:center;padding:9px 7px;border:1px solid #8d99a8}
+  td{padding:7px;border:1px solid #d1d7df;vertical-align:top;white-space:normal;word-wrap:break-word;mso-wrap-style:square}
+  tr:nth-child(even) td{background:#f5f7fa}
+  .msg{width:34%}
+</style>
+</head>
+<body>
+<h1>Reporte de Sugerencias y Retroalimentación · PREPARA 360</h1>
+<p>Regional 15 de Educación · MINERD · Registros filtrados: ${datos.length}</p>
+<table>
+<thead><tr>
+<th>ID</th><th>Fecha</th><th>Centro Educativo</th><th>Distrito</th>
+<th>Actor</th><th>Categoría</th><th>Destino de Envío</th><th class="msg">Mensaje</th>
+</tr></thead>
+<tbody>${filas}</tbody>
+</table>
+</body>
+</html>`;
+
+  descargarArchivoDirecto(
+    `reporte_prepara360_regional15_${fechaArchivo()}.xls`,
+    tabla,
+    "application/vnd.ms-excel;charset=utf-8"
+  );
+};
+
+// Exportación exclusiva de centros y distritos realmente registrados en el buzón.
+// No crea nombres, códigos ni distritos nuevos: usa únicamente los valores almacenados.
+function registrosCentrosDistritos(){
+  const datos = load();
+  const mapa = new Map();
+  datos.forEach(x => {
+    const centro = String(x.centro || "").trim();
+    const distrito = String(x.distrito || "").trim();
+    if(!centro) return;
+    const clave = centro.toLocaleLowerCase("es-DO");
+    if(!mapa.has(clave)) mapa.set(clave, {centro, distritos:new Set(), envios:0});
+    const item = mapa.get(clave);
+    if(distrito) item.distritos.add(distrito);
+    item.envios++;
+  });
+  return [...mapa.values()].sort((a,b)=>a.centro.localeCompare(b.centro,"es-DO"));
+}
+
+$("#bCentros").onclick = () => {
+  const centros = registrosCentrosDistritos();
+  if(!centros.length) return alert("No hay centros educativos registrados en el buzón. No se generará ningún nombre inventado.");
+
+  const filas = centros.map((x,i)=>`
+    <tr>
+      <td>${i+1}</td>
+      <td>${esc(x.centro)}</td>
+      <td>${esc([...x.distritos].sort().join(", "))}</td>
+      <td>${x.envios}</td>
+    </tr>`).join("");
+
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><style>
+    body{font-family:Calibri,Arial,sans-serif;color:#1d2433}h1{color:#002D62;text-align:center;font-size:18pt}
+    p{text-align:center;color:#5b6578}.nota{background:#f4f6f9;padding:8px;border-left:4px solid #002D62}
+    table{border-collapse:collapse;width:100%;table-layout:fixed}th{background:#002D62;color:#fff;padding:9px;border:1px solid #8793a2}
+    td{padding:8px;border:1px solid #d1d7df;vertical-align:top;word-wrap:break-word}tr:nth-child(even) td{background:#f7f9fc}
+  </style></head><body>
+    <h1>Centros Educativos y Distritos Registrados</h1>
+    <p>PREPARA 360 · Regional 15 de Educación · MINERD</p>
+    <p class="nota">Este listado contiene exclusivamente centros y distritos que aparecen en los registros reales almacenados en este buzón.</p>
+    <table><thead><tr><th>No.</th><th>Centro Educativo</th><th>Distrito(s) registrado(s)</th><th>Envíos</th></tr></thead><tbody>${filas}</tbody></table>
+  </body></html>`;
+
+  descargarArchivoDirecto(`centros_distritos_registrados_prepara360_${fechaArchivo()}.xls`, html, "application/vnd.ms-excel;charset=utf-8");
+};
+
+// Exportación Word: documento HTML enriquecido que Word abre como .doc.
+$("#bWord").onclick = () => {
+  const datos = datosFiltrados();
+  if(!datos.length) return alert("No hay sugerencias que coincidan con los filtros actuales.");
+
+  const tarjetas = datos.map((x,i) => `
+    <div class="card">
+      <div class="card-title">Sugerencia ${i+1} · ID ${esc(x.id || "—")}</div>
+      <table class="meta">
+        <tr><td><b>Centro educativo</b><br>${esc(x.centro || "—")}</td>
+            <td><b>Distrito</b><br>${esc(x.distrito || "—")}</td>
+            <td><b>Actor</b><br>${esc(x.actor || "—")}</td></tr>
+        <tr><td><b>Categoría</b><br>${esc(x.categoria || "—")}</td>
+            <td><b>Fecha</b><br>${esc(x.fecha || "—")}</td>
+            <td><b>Destino de envío</b><br>${esc(x.correoDestino || "—")}</td></tr>
+      </table>
+      <div class="message"><b>Mensaje o sugerencia</b><p>${esc(x.mensaje || "—").replace(/\n/g,"<br>")}</p></div>
+    </div>`).join("");
+
+  const docHtml = `<!DOCTYPE html>
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:w="urn:schemas-microsoft-com:office:word"
+      xmlns="http://www.w3.org/TR/REC-html40" lang="es">
+<head>
+<meta charset="utf-8">
+<title>Reporte Oficial de Sugerencias y Retroalimentación - PREPARA 360</title>
+<style>
+  @page{margin:1.8cm}
+  body{font-family:Arial,Helvetica,sans-serif;color:#202733;font-size:10.5pt}
+  h1{font-family:Georgia,serif;color:#002D62;text-align:center;font-size:18pt;margin:0 0 5px}
+  .sub{text-align:center;color:#5b6578;margin:0 0 18px}
+  .line{border-top:3px solid #002D62;margin-bottom:16px}
+  .card{border:1px solid #cbd3de;border-radius:9px;padding:12px;margin:0 0 14px;page-break-inside:avoid}
+  .card-title{color:#002D62;font-weight:bold;font-size:12pt;margin-bottom:10px}
+  .meta{width:100%;border-collapse:separate;border-spacing:5px;margin:-5px}
+  .meta td{background:#f4f6f9;border:1px solid #dce1e8;padding:7px;vertical-align:top;width:33%}
+  .meta b{color:#002D62}
+  .message{margin-top:9px;padding-top:8px;border-top:1px solid #e1e5eb}
+  .message>b{color:#002D62}
+  .message p{line-height:1.5;margin:6px 0 0;white-space:normal}
+  .foot{text-align:center;color:#687386;font-size:8.5pt;margin-top:18px;border-top:1px solid #d5dbe4;padding-top:8px}
+</style>
+</head>
+<body>
+<h1>Reporte Oficial de Sugerencias y Retroalimentación - PREPARA 360 (Regional 15 de Educación)</h1>
+<p class="sub">Ministerio de Educación de la República Dominicana · MINERD</p>
+<div class="line"></div>
+${tarjetas}
+<div class="foot">PREPARA 360 · Regional 15 de Educación · Registros exportados: ${datos.length}</div>
+</body>
+</html>`;
+
+  descargarArchivoDirecto(
+    `reporte_prepara360_regional15_${fechaArchivo()}.doc`,
+    docHtml,
+    "application/msword;charset=utf-8"
+  );
+};
+
+// PDF ejecutivo: prepara la vista de impresión y abre el diálogo nativo del navegador.
+$("#bPdf").onclick = () => {
+  const datos = datosFiltrados();
+  if(!datos.length) return alert("No hay sugerencias que coincidan con los filtros actuales.");
+  $("#printDate").textContent = new Date().toLocaleString("es-DO");
+  window.print();
+};
+
+// JSON: respaldo completo de localStorage, no solo del buzón.
+$("#bJson").onclick = () => {
+  try{
+    if(!localStorage.length) return alert("No hay datos en localStorage para respaldar.");
+    const respaldo = {
+      formato: "PREPARA360_LOCALSTORAGE_BACKUP",
+      version: 1,
+      generadoEn: new Date().toISOString(),
+      origen: "Buzón de Sugerencias Digital · PREPARA 360 · Regional 15",
+      datos: Object.fromEntries(
+        Object.keys(localStorage).sort().map(clave => [clave, localStorage.getItem(clave)])
+      )
+    };
+    descargarArchivoDirecto(
+      `respaldo_localstorage_prepara360_${fechaArchivo()}.json`,
+      JSON.stringify(respaldo, null, 2),
+      "application/json;charset=utf-8"
+    );
+  }catch(e){
+    console.error("Error al respaldar localStorage:", e);
+    alert("No fue posible crear el respaldo JSON.");
+  }
+};
+
+if(/^https?:/.test(location.href)) $("#url").value = location.href.split("#")[0];
+
+let qrInstance = null;
+$("#bQr").onclick = () => {
+  const u = $("#url").value.trim();
+  const err = $("#qrErr");
+  if(!/^https?:\/\/.+\..+/.test(u)) {
+    err.textContent = "Escriba un enlace completo que comience con https://";
+    return;
+  }
+  if(!window.QRCode) {
+    err.textContent = "No se cargó la librería del QR.";
+    return;
+  }
+  err.textContent = "";
+  const box = $("#qrContainer");
+  box.innerHTML = "";
+  $("#qrBox").hidden = false;
+  qrInstance = new QRCode(box, {
+    text: u,
+    width: 220,
+    height: 220,
+    colorDark: "#002D62",
+    colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.H
+  });
+};
+
+$("#bQrDl").onclick = () => {
+  const canvas = $("#qrContainer canvas");
+  if(!canvas) return;
+  const link = document.createElement("a");
+  link.href = canvas.toDataURL("image/png");
+  link.download = "QR_Buzon_Prepara360.png";
+  link.click();
+};
+
+actualizarVistaPanel();
+</script>
+</body>
+</html>
